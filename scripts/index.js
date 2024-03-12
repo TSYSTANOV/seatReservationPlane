@@ -20,7 +20,7 @@ async function init(selectorApp, title) {
     h1.textContent = tourData.tour;
     main.append(...forms);
 
-    readyPlane(forms, main, tourData,h1);
+    readyPlane(forms, main, tourData, h1);
   });
 }
 
