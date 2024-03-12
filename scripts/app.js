@@ -44,5 +44,5 @@ export const start = (app, title) => {
     main.append(firstForm)
     app.append(h1, main)
 
-    return {main, firstForm}
+    return {main, firstForm, h1}
 }
