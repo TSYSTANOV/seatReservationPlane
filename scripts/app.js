@@ -1,48 +1,53 @@
-import { createElement } from "./createElement.js"
+import { createElement } from "./createElement.js";
 
-const createTitle = (title) =>{
-    const h1 = createElement('h1', {
-        className:'title',
-        textContent: title 
-    })
-    return h1
-}
+const createTitle = (title) => {
+  const h1 = createElement("h1", {
+    className: "title",
+    textContent: title,
+  });
+  return h1;
+};
 
 const createMain = () => {
-    const main = createElement('main',{
-        className:'person-data'
-    })
-    return main
-}
+  const main = createElement("main", {
+    className: "person-data",
+  });
+  return main;
+};
 
-const createFirstForm = () =>{
-    const form = createElement('form',{className:'field'})
-    const label = createElement('label',{className:'field__label',
-    textContent:'Укажите количество человек (max: 6)'
-    })
-    const input = createElement('input',{className:'field__input',
-    id:'count',
-    name:'count',
-    type:"number",
-    min:'1',
-    max:'6',
-    placeholder:'#',
-    required: true})
-    const btn = createElement('button',{className:'btn-confirm',
-    type:'submit',
-    textContent:'Подтвердить'})
-    
-    form.append(label, input, btn)
+const createFirstForm = () => {
+  const form = createElement("form", { className: "field" });
+  const label = createElement("label", {
+    className: "field__label",
+    textContent: "Укажите количество человек (max: 6)",
+  });
+  const input = createElement("input", {
+    className: "field__input",
+    id: "count",
+    name: "count",
+    type: "number",
+    min: "1",
+    max: "6",
+    placeholder: "#",
+    required: true,
+  });
+  const btn = createElement("button", {
+    className: "btn-confirm",
+    type: "submit",
+    textContent: "Подтвердить",
+  });
 
-    return form
-}
+  form.append(label, input, btn);
+
+  return form;
+};
 
 export const start = (app, title) => {
-    const h1 = createTitle(title)
-    const main = createMain()
-    const firstForm = createFirstForm()
-    main.append(firstForm)
-    app.append(h1, main)
+  const h1 = createTitle(title);
+  const main = createMain();
+  const firstForm = createFirstForm();
+  main.append(firstForm);
+  app.append(h1, main);
 
-    return {main, firstForm, h1}
-}
+  return { main, firstForm, h1 };
+};
