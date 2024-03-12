@@ -44,7 +44,9 @@ function createBlockSeat(n, count) {
   return fuselage;
 }
 
-function createAirplane(title, scheme) {
+function createAirplane(title, tourData) {
+  const scheme = tourData.scheme;
+
   const choisesSeat = createElement("form", { className: "choises-seat" });
 
   const plane = createElement("fieldset", {
@@ -55,7 +57,6 @@ function createAirplane(title, scheme) {
   const cockpit = createCockpit(title);
   /////
   /////
-
   let n = 1;
 
   const elements = scheme.map((type) => {
@@ -68,7 +69,6 @@ function createAirplane(title, scheme) {
       return blockSeat;
     }
   });
-
   /////
   /////
   plane.append(cockpit, ...elements);
@@ -76,16 +76,61 @@ function createAirplane(title, scheme) {
   return choisesSeat;
 }
 
-export const airplane = (root, data) => {
+function checkSeat(form, data, h1) {
+  form.addEventListener("change", () => {
+    const formData = new FormData(form);
+    const checked = [...formData].map(([key, value]) => {
+      return value;
+    });
+
+    if (checked.length === data.length) {
+      [...form].forEach((item) => {
+        if (item.checked === false && item.name === "seat") {
+          item.disabled = true;
+        }
+      });
+    } else {
+      [...form].forEach((item) => {
+        if (item.checked === false && item.name === "seat") {
+          item.disabled = false;
+        }
+      });
+    }
+  });
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const booking = [...formData].map(([key, value]) => {
+      return value;
+    });
+    for (let i = 0; i < data.length; i++) {
+      data[i].seat = booking[i];
+    }
+    console.log(data);
+    const seatPlaces = data.map((item) => {
+      return item.seat;
+    });
+    h1.textContent = `Спасибо хорошего полёта, ваши места: ${seatPlaces.join(
+      ", "
+    )}`;
+    form.remove();
+  });
+}
+
+export const airplane = (root, data, tourData, h1) => {
   const title = `Выберите ${data.length} ${declOfNum(data.length, [
     "место",
     "места",
     "мест",
   ])}`;
 
-  const scheme = ["exit", 11, "exit", 1, "exit", 17, "exit"];
+  const choiseForm = createAirplane(title, tourData);
 
-  root.append(createAirplane(title, scheme));
+  checkSeat(choiseForm, data, h1);
+
+  // const scheme = ["exit", 11, "exit", 1, "exit", 17, "exit"];
+
+  root.append(choiseForm);
 };
 
 //////

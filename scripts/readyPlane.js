@@ -1,6 +1,6 @@
 import { airplane } from "./airplane.js";
 
-export const readyPlane = (forms, root) => {
+export const readyPlane = (forms, root, tourData, h1) => {
   const data = [];
 
   forms.forEach((form) => {
@@ -16,7 +16,7 @@ export const readyPlane = (forms, root) => {
       });
       if (forms.length === data.length) {
         root.innerHTML = "";
-        airplane(root, data);
+        airplane(root, data, tourData, h1);
       }
     });
   });
