@@ -1,4 +1,5 @@
 import { createElement } from "./createElement.js";
+import { getStorage, setStorage } from "./storage.js";
 
 function createCockpit(titleText) {
   const cockpit = createElement("div", {
@@ -22,10 +23,10 @@ function createExit() {
   return fuselage;
 }
 
-function createBlockSeat(n, count) {
+function createBlockSeat(n, count, bookingSeat) {
   const letters = ["A", "B", "C", "D", "E", "F"];
   const fuselage = createElement("ol", { className: "fuselage" });
-
+  
   for (let i = n; i < count + n; i++) {
     const wrapperRow = createElement("li");
     const seats = createElement("ol", { className: "seats" });
@@ -33,8 +34,19 @@ function createBlockSeat(n, count) {
 
     let elems = letters.map((letter) => {
       const li = createElement("li", { className: "seat" });
-      li.innerHTML = `
-        <label><input name="seat" type="checkbox" value="${i}${letter}"></label>`;
+
+      const label = createElement('label')
+      const input = createElement('input',{
+        name:'seat',
+        type:'checkbox',
+        value:`${i}${letter}`
+      })
+      label.append(input)
+      li.append(label)
+      
+      if(bookingSeat.includes(`${i}${letter}`)){
+        input.disabled = true
+      }
       return li;
     });
 
@@ -47,6 +59,8 @@ function createBlockSeat(n, count) {
 function createAirplane(title, tourData) {
   const scheme = tourData.scheme;
 
+  const bookingSeat = getStorage(tourData.id).map(item=>item.seat)
+  
   const choisesSeat = createElement("form", { className: "choises-seat" });
 
   const plane = createElement("fieldset", {
@@ -64,7 +78,7 @@ function createAirplane(title, tourData) {
       return createExit();
     }
     if (typeof type === "number") {
-      const blockSeat = createBlockSeat(n, type);
+      const blockSeat = createBlockSeat(n, type, bookingSeat);
       n = n + type;
       return blockSeat;
     }
@@ -76,26 +90,29 @@ function createAirplane(title, tourData) {
   return choisesSeat;
 }
 
-function checkSeat(form, data, h1) {
+function checkSeat(form, data, h1, id) {
+  const bookingSeat = getStorage(id).map(el=>el.seat)
   form.addEventListener("change", () => {
     const formData = new FormData(form);
     const checked = [...formData].map(([key, value]) => {
       return value;
     });
-
+console.log(bookingSeat)
     if (checked.length === data.length) {
       [...form].forEach((item) => {
         if (item.checked === false && item.name === "seat") {
           item.disabled = true;
         }
       });
-    } else {
+    } 
+    else {
       [...form].forEach((item) => {
-        if (item.checked === false && item.name === "seat") {
+        if (item.checked === false && item.name === "seat" && !bookingSeat.includes(item.value)) {
           item.disabled = false;
         }
       });
     }
+
   });
   form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -113,6 +130,7 @@ function checkSeat(form, data, h1) {
     h1.textContent = `Спасибо хорошего полёта, ваши места: ${seatPlaces.join(
       ", "
     )}`;
+    setStorage(id, data)
     form.remove();
   });
 }
@@ -126,7 +144,7 @@ export const airplane = (root, data, tourData, h1) => {
 
   const choiseForm = createAirplane(title, tourData);
 
-  checkSeat(choiseForm, data, h1);
+  checkSeat(choiseForm, data, h1, tourData.id);
 
   // const scheme = ["exit", 11, "exit", 1, "exit", 17, "exit"];
 
